@@ -1,26 +1,31 @@
 const express = require('express');
 const app = express();
-const PORT = 3000;
+const port = 3000;
 
-// Middleware (optional for this case, but used to parse JSON if needed)
-app.use(express.json());
+app.use(express.json()); // middleware to parse JSON
 
-// GET /health endpoint
-app.get('/health', (req, res) => {
-  res.json({ status: 'Server is healthy' });
-});
+// In-memory array to store persons
+const persons = [];
 
-// GET /person endpoint
+// GET route - get all persons
 app.get('/person', (req, res) => {
-  const person = {
-    name: "Joshi",
-    lastName: "Jay",        // <-- New field added
-    age: "27"
-  };
-  res.json(person);
+  res.json(persons);
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
+// POST route - insert a new person
+app.post('/person', (req, res) => {
+  const { name, age, lastName } = req.body;
+
+  if (!name || !age) {
+    return res.status(400).json({ error: 'Name and age are required' });
+  }
+
+  const newPerson = { name, age, lastName: lastName || '' };
+  persons.push(newPerson);
+
+  res.status(201).json({ message: 'Person added', person: newPerson });
+});
+
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
 });
