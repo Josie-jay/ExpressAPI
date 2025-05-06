@@ -1,31 +1,26 @@
 const express = require('express');
+const cors = require('cors'); // ✅ import cors
 const app = express();
 const port = 3000;
 
-app.use(express.json()); // middleware to parse JSON
+app.use(cors()); // ✅ enable CORS
+app.use(express.json());
 
-// In-memory array to store persons
-const persons = [];
+// Sample in-memory data
+let persons = [
+  { name: "Joshi", age: 30, lastName: "Okafor" },
+  { name: "Ada", age: 25, lastName: "Eze" }
+];
 
-// GET route - get all persons
+// Routes
 app.get('/person', (req, res) => {
   res.json(persons);
 });
 
-// POST route - insert a new person
-app.post('/person', (req, res) => {
-  const { name, age, lastName } = req.body;
-
-  if (!name || !age) {
-    return res.status(400).json({ error: 'Name and age are required' });
-  }
-
-  const newPerson = { name, age, lastName: lastName || '' };
-  persons.push(newPerson);
-
-  res.status(201).json({ message: 'Person added', person: newPerson });
+app.get('/', (req, res) => {
+  res.send('Welcome to the API');
 });
 
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });
